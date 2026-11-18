@@ -11,3 +11,4 @@ One-time setup:
 3. Push to `main`, or run the workflow manually from **Actions**.
 
 The project site will be available at `https://sharath07s.github.io/ALOKA/` after the workflow completes. Local development continues to use the root path with `npm run dev`.
+# ALOKAA
