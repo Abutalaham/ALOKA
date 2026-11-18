@@ -31,6 +31,29 @@ const PH1 = Math.PI * 2 + 1.35;
 const GRID_Z = 8;
 const RIBBON_START = 0.14;
 const RIBBON_END = 0.63;
+const PARTICLES = [
+  [7, 77, 5.2, -1.1],
+  [14, 86, 6.4, -3.2],
+  [19, 73, 4.8, -2.4],
+  [25, 94, 7.1, -4.7],
+  [31, 81, 5.7, -0.8],
+  [37, 102, 6.8, -5.3],
+  [43, 76, 4.5, -2.9],
+  [48, 90, 6.1, -1.8],
+  [54, 105, 7.4, -6.2],
+  [59, 79, 5.4, -3.7],
+  [64, 97, 6.6, -0.5],
+  [70, 74, 4.9, -4.4],
+  [76, 88, 7.2, -2.1],
+  [82, 103, 5.8, -5.8],
+  [88, 80, 6.3, -1.4],
+  [94, 92, 4.7, -3.5],
+] as const;
+
+type ParticleStyle = React.CSSProperties & {
+  '--travel-x': string;
+  '--travel-y': string;
+};
 
 const vertexShader = `
   varying vec2 vUv;
@@ -97,6 +120,8 @@ export const VanteRibbonHero: React.FC = () => {
   const glowRef = useRef<HTMLDivElement>(null);
   const ruleRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);
+  const orbRef = useRef<HTMLDivElement>(null);
+  const particleFieldRef = useRef<HTMLDivElement>(null);
   const [webglError, setWebglError] = useState(false);
 
   useEffect(() => {
@@ -336,9 +361,14 @@ export const VanteRibbonHero: React.FC = () => {
 
     const render = () => {
       const rise = 1 - out(span(progress, 0, 0.12));
-      const run = mix(-50, 76, span(progress, 0, 0.58));
+      const startOffset = width < 760 ? 0 : -20;
+      const run = mix(startOffset, 76, span(progress, 0, 0.58));
       if (firstLineRef.current) firstLineRef.current.style.transform = `translate3d(${run}vw,${rise * 34}vh,0)`;
       if (secondLineRef.current) secondLineRef.current.style.transform = `translate3d(${-run}vw,${rise * 34}vh,0)`;
+
+      const ambientOpacity = 1 - span(progress, 0.08, 0.2);
+      if (orbRef.current) orbRef.current.style.opacity = String(ambientOpacity * 0.88);
+      if (particleFieldRef.current) particleFieldRef.current.style.opacity = String(ambientOpacity);
 
       const caption = captionRef.current;
       if (caption) {
@@ -480,7 +510,21 @@ export const VanteRibbonHero: React.FC = () => {
   return (
     <div className="vante-track" id="home" ref={trackRef}>
       <section className="vante-stage" id="stage" ref={stageRef} aria-label="ALOKA portfolio introduction">
+        <div className="vante-orb" ref={orbRef} aria-hidden="true" />
         <canvas ref={canvasRef} className="vante-canvas" aria-hidden="true" />
+        <div className="vante-particles" ref={particleFieldRef} aria-hidden="true">
+          {PARTICLES.map(([left, top, duration, delay], index) => {
+            const style: ParticleStyle = {
+              left: `${left}%`,
+              top: `${top}vh`,
+              animationDuration: `${duration}s`,
+              animationDelay: `${delay}s`,
+              '--travel-x': `${50 - left}vw`,
+              '--travel-y': `${37.5 - top}vh`,
+            };
+            return <i className="vante-particle" key={index} style={style} />;
+          })}
+        </div>
         <div className="vante-brand-landing" ref={brandRef} aria-hidden="true">
           <div className="vante-brand-drop">
             <svg viewBox="0 0 22 18">

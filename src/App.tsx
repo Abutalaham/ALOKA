@@ -7,10 +7,12 @@ import WorkSection from './sections/WorkSection';
 import InsightsSection from './sections/InsightsSection';
 import ContactSection from './sections/ContactSection';
 import Footer from './components/Footer';
+import PostHeroBackground from './components/PostHeroBackground';
 
 export const App: React.FC = () => {
   return (
     <div className="relative min-h-screen bg-[#030303] text-white selection:bg-purple-600/30 selection:text-purple-200">
+      <PostHeroBackground />
       <main className="relative z-10 flex flex-col">
         <VanteRibbonHero />
         <ServicesSection />
